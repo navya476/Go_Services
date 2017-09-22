@@ -11,7 +11,13 @@ import (
 )
 
 func TestMain(t *testing.T) {
-	url := os.Getenv("DRP_CF_HTTP_ADDR")
+	var url string
+	if os.Getenv("DRP_CF_HTTP_ADDR") != "" {
+		url = os.Getenv("DRP_CF_HTTP_ADDR")
+	} else {
+		url = "localhost"
+	}
+
 	// Create Pact, connecting to local Daemon
 	// Ensure the port matches the daemon port!
 	pact := dsl.Pact{
@@ -63,17 +69,17 @@ func TestMain(t *testing.T) {
 
 	pact.WritePact()
 
-        // Shuts down Mock Service when done
-        defer pact.Teardown()
-        p := dsl.Publisher{}
-        err := p.Publish(types.PublishRequest{
-                PactURLs:        []string{"./pacts/go_consumer-go_provider.json"},
-                PactBroker:      "http://54.207.30.143:8081",
-                ConsumerVersion: "1.0.1",
-                Tags:            []string{"latest", "dev"},
-        })
-        if err != nil {
-                fmt.Println(err)
-        }
+	// Shuts down Mock Service when done
+	defer pact.Teardown()
+	p := dsl.Publisher{}
+	err := p.Publish(types.PublishRequest{
+		PactURLs:        []string{"./pacts/go_consumer-go_provider.json"},
+		PactBroker:      "http://54.207.30.143:8081",
+		ConsumerVersion: "1.0.1",
+		Tags:            []string{"latest", "dev"},
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
 
 }

@@ -11,8 +11,19 @@ import (
 )
 
 func main() {
-	port := os.Getenv("DRP_CF_HTTP_PORT")
-	url := os.Getenv("DRP_CF_HTTP_ADDR")
+	var port string
+
+	var url string
+	if os.Getenv("DRP_CF_HTTP_ADDR") != "" {
+		url = os.Getenv("DRP_CF_HTTP_ADDR")
+	} else {
+		url = "localhost"
+	}
+	if os.Getenv("DRP_CF_HTTP_PORT") != "" {
+		port = os.Getenv("DRP_CF_HTTP_PORT")
+	} else {
+		port = "8085"
+	}
 	r := mux.NewRouter()
 	r.HandleFunc("/user", User).Methods("Get")
 	r.HandleFunc("/.well-known/live", Live).Methods("Get")
